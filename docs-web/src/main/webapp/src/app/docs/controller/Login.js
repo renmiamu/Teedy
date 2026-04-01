@@ -5,6 +5,7 @@
  */
 angular.module('docs').controller('Login', function(Restangular, $scope, $rootScope, $state, $stateParams, $dialog, User, $translate, $uibModal) {
   $scope.codeRequired = false;
+  $scope.guestNotice = null;
 
   // Get the app configuration
   Restangular.one('app').get().then(function(data) {
@@ -19,10 +20,32 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
     };
     $scope.login();
   };
+
+  $scope.visitAsGuest = function($event) {
+    if ($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+    }
+
+    $scope.guestNotice = $translate.instant('login.guest_login_trying');
+
+    if (!$rootScope.app || !$rootScope.app.guest_login) {
+      var title = $translate.instant('login.guest_login_disabled_title');
+      var msg = $translate.instant('login.guest_login_disabled_message');
+      $scope.guestNotice = msg;
+      var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+      $dialog.messageBox(title, msg, btns);
+      return;
+    }
+
+    $scope.guestNotice = null;
+    $scope.loginAsGuest();
+  };
   
   // Login
   $scope.login = function() {
     User.login($scope.user).then(function() {
+      $scope.guestNotice = null;
       User.userInfo(true).then(function(data) {
         $rootScope.userInfo = data;
       });
@@ -36,6 +59,10 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
         $state.go('document.default');
       }
     }, function(data) {
+      if ($scope.user && $scope.user.username === 'guest') {
+        $scope.guestNotice = $translate.instant('login.guest_login_failed_message');
+      }
+
       if (data.data.type === 'ValidationCodeRequired') {
         // A TOTP validation code is required to login
         $scope.codeRequired = true;

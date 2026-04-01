@@ -24,6 +24,56 @@
     font-size: 90%;
     color: #666;
   }
+
+  /* Guest login section styling */
+  .guest-login-section {
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .guest-login-divider {
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    margin: 15px 0;
+    font-weight: 500;
+  }
+
+  .guest-login-info {
+    background: #f8f9fa;
+    border-left: 4px solid #17a2b8;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .guest-login-info .fas {
+    color: #17a2b8;
+    margin-right: 8px;
+  }
+
+  .guest-login-btn {
+    margin-top: 10px;
+  }
+
+  .guest-login-btn .btn {
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .guest-login-btn .btn-guest {
+    background-color: #f0f0f0;
+    border-color: #ddd;
+    color: #333;
+  }
+
+  .guest-login-btn .btn-guest:hover {
+    background-color: #e8e8e8;
+    border-color: #ccc;
+  }
 </style>
 <div class="row vertical-center">
   <div class="col-sm-6 col-xs-12 login-box">
@@ -74,11 +124,23 @@
             </div>
           </div>
 
-          <p class="text-center" ng-if="app.guest_login">&nbsp;</p>
+          <!-- Guest login section -->
+          <div class="guest-login-section">
+            <div class="guest-login-divider">{{ 'login.or_visit_as' | translate }}</div>
 
-          <button type="submit" class="btn btn-default btn-block" ng-if="app.guest_login" ng-click="loginAsGuest()">
-            <span class="fas fa-user"></span> {{ 'login.login_as_guest' | translate }}
-          </button>
+            <div class="guest-login-info">
+              <span class="fas fa-info-circle"></span>
+              <span>{{ 'login.guest_access_info' | translate }}</span>
+            </div>
+
+            <div class="guest-login-btn">
+              <button type="button" class="btn btn-guest btn-block" ng-click="visitAsGuest($event)">
+                <span class="fas fa-user-secret"></span> {{ 'login.visiting_as_guest' | translate }}
+              </button>
+            </div>
+
+            <p class="help-block text-warning" ng-if="guestNotice">{{ guestNotice }}</p>
+          </div>
         </form>
       </div>
     </div>
